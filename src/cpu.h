@@ -1,0 +1,53 @@
+#pragma once
+
+#include "encoding.h"
+#include "bus.h"
+
+#include <array>
+#include <cstdint>
+#include <iostream>
+
+
+template<typename ISA>
+class CPU
+{
+public:
+	Bus& bus;
+	std::array<typename ISA::word_t, 32> r;
+	typename ISA::word_t pc;
+
+
+	CPU(Bus& bus) : bus(bus), pc(0)
+	{
+		r.fill(0);
+	}
+
+    void wReg(uint32_t reg_idx, typename ISA::word_t value)
+    {
+        if (reg_idx != 0) {
+            r[reg_idx] = value;
+        }
+    }
+
+    void step()
+	{
+		typename ISA::word_t encoding = bus.read(pc, 4);
+
+		DecodedInstr d;
+		
+		ISA::decode(encoding, d);
+
+		if (d.instr == Instr::UNKNOWN)
+		{
+			throw std::runtime_error("Illegal instruction at PC: 0x" + std::to_string(pc) + " (encoding: 0x" + std::hex + encoding + std::dec + ")");
+		}
+
+		typename ISA::word_t nextPC = pc + 4;
+
+		ISA::execute(*this, d, nextPC);
+
+		pc = nextPC;
+
+		r[0] = 0;
+	}
+};
