@@ -28,7 +28,7 @@ struct TestCPUFixture {
         uint32_t initial_pc = cpu.pc;
 
         DecodedInstr d;
-        RV32I::decode(encoding, d);
+        RV32M::decode(encoding, d);
 
         if (d.instr == Instr::UNKNOWN)
         {
@@ -36,7 +36,7 @@ struct TestCPUFixture {
         }
 
         uint32_t nextPC = initial_pc + 4;
-        RV32I::execute(cpu, d, nextPC);
+        RV32M::execute(cpu, d, nextPC);
 
         cpu.pc = nextPC;
     }
@@ -117,7 +117,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: MULH pos * pos (high bits)", "[RV32M][E
     cpu.r[1] = 3;
     cpu.r[2] = 6;
     execute_instruction(0x022081b3);
-    REQUIRE(cpu.r[3] == 32);
+    REQUIRE(cpu.r[3] == 18);
     REQUIRE(cpu.pc == 0x80000004);
 }
 

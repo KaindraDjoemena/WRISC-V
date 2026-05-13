@@ -182,6 +182,14 @@ bool RV32I::decode(uint32_t encoding, DecodedInstr& d)
             d.rs1 = extractRs1(encoding);
             d.imm = extractImm(InstrFmt::I, encoding);
 
+            uint8_t funct3 = mask(encoding, 12, 3);
+
+            if (funct3 == 0b001)
+            { 
+                d.instr = Instr::FENCE_I;
+                return true; 
+            }
+
             uint8_t fm = mask(encoding, 28, 4);
 
             if (encoding == 0x0100000F) { d.instr = Instr::PAUSE;     return true; }
@@ -192,6 +200,12 @@ bool RV32I::decode(uint32_t encoding, DecodedInstr& d)
         }
         case Op::SYSTEM:
         {
+            uint8_t funct3 = mask(encoding, 12, 3);
+            if (funct3 != 0)
+            {
+                return false;
+            }  
+
             uint32_t imm = extractImm(InstrFmt::I, encoding);
             switch(imm)
             {

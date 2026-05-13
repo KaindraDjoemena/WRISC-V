@@ -236,7 +236,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: BNE execution (taken)", "[RV32I][Execut
     cpu.r[1] = 10;
     cpu.r[2] = 20;
     execute_instruction(0x00209463);
-    REQUIRE(cpu.pc == 0x8000000c);
+    REQUIRE(cpu.pc == 0x80000008);
 }
 TEST_CASE_METHOD(TestCPUFixture, "RV32I: BNE execution (not taken)", "[RV32I][Execute][BNE]")
 {
@@ -264,7 +264,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: BLT execution (not taken, signed)", "[R
     cpu.r[1] = 10;
     cpu.r[2] = (uint32_t)-5;
     execute_instruction(0x0020C663);
-    REQUIRE(cpu.pc == 0x8000000c);
+    REQUIRE(cpu.pc == 0x80000004);
 }
 
 /*
@@ -324,7 +324,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: BLTU treats high bit as unsigned (not t
 }
 
 /*
-    BGEU x1, x2, 8
+    BGEU x1, x2, 12
 */
 TEST_CASE_METHOD(TestCPUFixture, "RV32I: BGEU execution (taken, unsigned)", "[RV32I][Execute][BGEU]")
 {
@@ -332,7 +332,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: BGEU execution (taken, unsigned)", "[RV
     cpu.r[1] = 10;
     cpu.r[2] = 5;
     execute_instruction(0x0020F663);
-    REQUIRE(cpu.pc == 0x80000008);
+    REQUIRE(cpu.pc == 0x8000000c);
 }
 TEST_CASE_METHOD(TestCPUFixture, "RV32I: BGEU execution (equal, taken)", "[RV32I][Execute][BGEU]")
 {
@@ -340,7 +340,7 @@ TEST_CASE_METHOD(TestCPUFixture, "RV32I: BGEU execution (equal, taken)", "[RV32I
     cpu.r[1] = 5;
     cpu.r[2] = 5;
     execute_instruction(0x0020F663);
-    REQUIRE(cpu.pc == 0x80000008);
+    REQUIRE(cpu.pc == 0x8000000c);
 }
 TEST_CASE_METHOD(TestCPUFixture, "RV32I: BGEU execution (not taken, unsigned)", "[RV32I][Execute][BGEU]")
 {

@@ -2,6 +2,7 @@
 
 #include "encoding.h"
 #include "bus.h"
+#include "extensions/utils.h"
 
 #include <array>
 #include <cstdint>
@@ -16,6 +17,7 @@ public:
 	std::array<typename ISA::word_t, 32> r;
 	typename ISA::word_t pc;
 
+	typename ISA::word_t csr[4096];
 
 	CPU(Bus& bus) : bus(bus), pc(0)
 	{
@@ -24,7 +26,8 @@ public:
 
     void wReg(uint32_t reg_idx, typename ISA::word_t value)
     {
-        if (reg_idx != 0) {
+        if (reg_idx != 0)
+		{
             r[reg_idx] = value;
         }
     }
@@ -49,5 +52,7 @@ public:
 		pc = nextPC;
 
 		r[0] = 0;
+
+		trace(pc, d);
 	}
 };

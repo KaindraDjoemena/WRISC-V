@@ -46,7 +46,7 @@ if(BUILD_TESTING)
     target_link_libraries(wriscv_test_rv32i PRIVATE wriscv_core Catch2::Catch2WithMain)
     catch_discover_tests(wriscv_test_rv32i)
 
-        add_executable(wriscv_test_rv32m "${TEST_DIR}/test_rv32m.cpp")
+    add_executable(wriscv_test_rv32m "${TEST_DIR}/test_rv32m.cpp")
     target_link_libraries(wriscv_test_rv32m PRIVATE wriscv_core Catch2::Catch2WithMain)
     catch_discover_tests(wriscv_test_rv32m)
 endif()

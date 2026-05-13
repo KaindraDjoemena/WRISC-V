@@ -85,5 +85,10 @@ static int32_t extractImm(InstrFmt type, uint32_t encoding)
 inline
 static void trace(uint32_t pc, const DecodedInstr& d)
 {
-    std::cout << "pc: " << pc << " | " << (int)d.instr << " | rd: " << d.rd << " | rs1: " << d.rs1 << " | rs2: " << d.rs2 << " | imm: " << d.imm << '\n';
+    std::cout << "pc: 0x"     << std::hex   << pc           <<
+                 " | instr: " << std::dec   << (int)d.instr <<
+                 " | rd: x"   << (int)d.rd  <<
+                 " | rs1: "   << (int)d.rs1 <<
+                 " | rs2: "   << (int)d.rs2 <<
+                 " | imm: 0x" << std::hex   << d.imm << std::dec << '\n';
 }
