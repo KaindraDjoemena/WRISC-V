@@ -1,7 +1,18 @@
-# RISC-V emulator
+# WRISC-V
 
-## Goal
-able to boot linux
+## Description
+
+a functioning RV32G (unprivileged) implementation -- [RISC-V Instruction Set Manual](https://docs.riscv.org/reference/isa/unpriv/unpriv-index.html)
 
 ## Status
-working towards the R32GC (I, M, A, F, D, Zicsr, Zifencei, C) instruction set
+
+| Extension | Impl | Test |
+| --- | --- | --- |
+| I | v | v |
+| M | v | v |
+| A | X | X |
+| F | X | X |
+| D | X | X |
+| Zicsr | X | X |
+| Zifencei | v | X |
+| C | X | X |
