@@ -21,32 +21,5 @@ target_include_directories(wriscv_core PUBLIC
     "${EXT_DIR}"
 )
 
-option(BUILD_APP "Build the main application" ON)
-if(BUILD_APP)
-    add_executable(wriscv_app "${SRC_DIR}/main.cpp")
-    target_link_libraries(wriscv_app PRIVATE wriscv_core)
-endif()
-
-option(BUILD_TESTING "Build tests" ON)
-if(BUILD_TESTING)
-    enable_testing()
-    
-    include(FetchContent)
-    FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git 
-        GIT_TAG        v3.4.0
-    )
-    FetchContent_MakeAvailable(Catch2)
-    
-    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-    include(Catch)
-    
-    add_executable(wriscv_test_rv32i "${TEST_DIR}/test_rv32i.cpp")
-    target_link_libraries(wriscv_test_rv32i PRIVATE wriscv_core Catch2::Catch2WithMain)
-    catch_discover_tests(wriscv_test_rv32i)
-
-    add_executable(wriscv_test_rv32m "${TEST_DIR}/test_rv32m.cpp")
-    target_link_libraries(wriscv_test_rv32m PRIVATE wriscv_core Catch2::Catch2WithMain)
-    catch_discover_tests(wriscv_test_rv32m)
-endif()
+add_executable(wriscv "${SRC_DIR}/main.cpp")
+target_link_libraries(wriscv PRIVATE wriscv_core)

@@ -1,2 +1,4 @@
 build/
 .cache/
+riscv-tests/
+build_bins/

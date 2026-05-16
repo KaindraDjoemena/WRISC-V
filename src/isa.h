@@ -11,17 +11,15 @@ template<typename... Exts>
 struct ISA
 {
     using word_t  = uint32_t;
-    using instr_t = Instr;
-    
-    static std::optional<DecodedInstr> decode(word_t enc)
+
+    static bool decode(word_t enc, DecodedInstr& d)
     {
-        DecodedInstr d;
-        bool matched = (... || Exts::decode(enc, d));
-        return matched ? std::optional{d} : std::nullopt;
+        return (... || Exts::decode(enc, d));
     }
 
-    static void execute(CPU<ISA>& cpu, DecodedInstr d, word_t& nextPC)
+    template<typename CPUType>
+    static bool execute(CPUType& cpu, DecodedInstr d, word_t& nextPC)
     {
-        bool matched = (... || Exts::execute(cpu, d, nextPC));
+        return (... || Exts::execute(cpu, d, nextPC));
     }
 };

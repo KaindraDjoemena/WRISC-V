@@ -201,18 +201,19 @@ bool RV32I::decode(uint32_t encoding, DecodedInstr& d)
         case Op::SYSTEM:
         {
             uint8_t funct3 = mask(encoding, 12, 3);
-            if (funct3 != 0)
-            {
-                return false;
-            }  
-
             uint32_t imm = extractImm(InstrFmt::I, encoding);
-            switch(imm)
-            {
-                case 0b0: d.instr = Instr::ECALL;  return true;
-                case 0b1: d.instr = Instr::EBREAK; return true;
-                default:  return false;
+
+            if (funct3 == 0) {
+                switch(imm) {
+                    case 0x000: d.instr = Instr::ECALL;  return true;
+                    case 0x001: d.instr = Instr::EBREAK; return true;
+                    case 0x302: d.instr = Instr::MRET;   return true; // Add this
+                    case 0x102: d.instr = Instr::SRET;   return true; // Add this
+                    case 0x105: d.instr = Instr::WFI;    return true; // Add this
+                    default:    return false;
+                }
             }
+            return false;
         }
         default: return false;
     };
@@ -223,7 +224,7 @@ bool RV32I::execute(CPU<ISA_t>& cpu, DecodedInstr d, uint32_t& nextPC)
 {
     switch(d.instr)
     {
-        case Instr::UNKNOWN: return true;
+        case Instr::UNKNOWN: return false;
         case Instr::NOP:     return true; // NOTE: Shouldnt NOP be implicitly handled by ADDI x0, x0, 0 ? it just advances the pc and increments any applicable perf counters.
         case Instr::LUI:   cpu.wReg(d.rd, d.imm); return true;
         case Instr::AUIPC: cpu.wReg(d.rd, cpu.pc + (uint32_t)d.imm); return true;
@@ -252,9 +253,9 @@ bool RV32I::execute(CPU<ISA_t>& cpu, DecodedInstr d, uint32_t& nextPC)
         case Instr::LBU:   cpu.wReg(d.rd, (uint8_t) cpu.bus.read(cpu.r[d.rs1] + d.imm, 1)); return true;
         case Instr::LHU:   cpu.wReg(d.rd, (uint16_t)cpu.bus.read(cpu.r[d.rs1] + d.imm, 2)); return true;
 
-        case Instr::SB:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 1, cpu.r[d.rs2]); return true;
-        case Instr::SH:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 2, cpu.r[d.rs2]); return true;
-        case Instr::SW:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 4, cpu.r[d.rs2]); return true;
+        case Instr::SB:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 1, cpu.r[d.rs2]); cpu.resValid = false; return true;
+        case Instr::SH:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 2, cpu.r[d.rs2]); cpu.resValid = false; return true;
+        case Instr::SW:    cpu.bus.write(cpu.r[d.rs1] + d.imm, 4, cpu.r[d.rs2]); cpu.resValid = false; return true;
         
         case Instr::ADDI:  cpu.wReg(d.rd, cpu.r[d.rs1] + d.imm); return true;
         case Instr::SLTI:  cpu.wReg(d.rd, ((int32_t) cpu.r[d.rs1] < (int32_t) d.imm) ? 1 : 0); return true;
@@ -280,7 +281,10 @@ bool RV32I::execute(CPU<ISA_t>& cpu, DecodedInstr d, uint32_t& nextPC)
         case Instr::FENCE_TSO:
         case Instr::PAUSE:        return true;
         case Instr::ECALL:
-        case Instr::EBREAK:       return true;
+        case Instr::EBREAK:
+        case Instr::MRET:
+        case Instr::SRET:
+        case Instr::WFI:          return true;
         default:                  return false;
     };
 }

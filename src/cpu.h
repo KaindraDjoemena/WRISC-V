@@ -17,7 +17,10 @@ public:
 	std::array<typename ISA::word_t, 32> r;
 	typename ISA::word_t pc;
 
-	typename ISA::word_t csr[4096];
+	typename ISA::word_t csr[4096] = {0};
+
+	typename ISA::word_t resAddr = 0;
+	bool resValid = false;
 
 	CPU(Bus& bus) : bus(bus), pc(0)
 	{
@@ -32,27 +35,25 @@ public:
         }
     }
 
-    void step()
+	void step()
 	{
 		typename ISA::word_t encoding = bus.read(pc, 4);
+		DecodedInstr d = {};
 
-		DecodedInstr d;
-		
-		ISA::decode(encoding, d);
-
-		if (d.instr == Instr::UNKNOWN)
+		if (!ISA::decode(encoding, d)) 
 		{
-			throw std::runtime_error("Illegal instruction at PC: 0x" + std::to_string(pc) + " (encoding: 0x" + std::hex + encoding + std::dec + ")");
+			throw std::runtime_error("Illegal instruction at PC: 0x...");
 		}
 
 		typename ISA::word_t nextPC = pc + 4;
 
-		ISA::execute(*this, d, nextPC);
+		if (!ISA::execute(*this, d, nextPC))
+		{
+			throw std::runtime_error("Execution failed at PC: 0x...");
+		}
 
 		pc = nextPC;
-
 		r[0] = 0;
-
-		trace(pc, d);
+		trace(pc, d, *this);
 	}
 };
