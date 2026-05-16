@@ -1,6 +1,6 @@
 # WRISC-V
 
-## Description
+## Goal
 
 a functioning RV32G (unprivileged) implementation -- [RISC-V Instruction Set Manual](https://docs.riscv.org/reference/isa/unpriv/unpriv-index.html)
 
